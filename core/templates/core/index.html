@@ -1,0 +1,438 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Damith Graphics | Crafted Prints & Engineered Systems</title>
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800;900&family=Space+Grotesk:wght@600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-[#0B0F17] text-slate-100 font-sans antialiased overflow-x-hidden min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+    <!-- MAIN BRAND HEADER -->
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-[#0B0F17]/90 backdrop-blur-xl border-b border-slate-800/80 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Brand Logo & Name -->
+            <a href="/" class="flex items-center gap-3 group shrink-0">
+            <div class="p-1.5 bg-slate-100 rounded-xl border border-slate-200 group-hover:bg-amber-50 group-hover:border-amber-300 transition duration-300 shadow-sm">
+                <img src="{% static 'images/damith_graphics_logo.png' %}" alt="Damith Graphics Logo" class="w-8 h-8 object-contain">
+            </div>
+                <div>
+                    <p class="font-display font-bold text-lg text-white tracking-tight leading-none">DAMITH <span class="text-amber-400">GRAPHICS</span></p>
+                    <span class="text-[10px] font-bold tracking-widest text-slate-400 uppercase block mt-1">Crafted Prints &bull; Engineered Systems</span>
+                </div>
+            </a>
+
+
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden xl:flex items-center gap-2 text-xs font-bold tracking-wider uppercase">
+                <a href="{% url 'studio:showcase' 'mugs' %}" class="px-3 py-2 bg-slate-900 hover:bg-amber-500 text-slate-300 hover:text-slate-950 rounded-xl border border-slate-800 transition">
+                    ☕ Print Mugs
+                </a>
+                
+                <a href="{% url 'studio:showcase' 'photos' %}" class="px-3 py-2 bg-slate-900 hover:bg-blue-600 text-slate-300 hover:text-white rounded-xl border border-slate-800 transition">
+                    🖼️ Photo Framing
+                </a>
+                
+                <a href="https://cv200.lk" target="_blank" class="px-3 py-2 bg-slate-900 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-xl border border-slate-800 transition">
+                    📄 CV Builder
+                </a>
+                
+                <a href="https://gamegear.lk" target="_blank" class="px-3 py-2 bg-slate-900 hover:bg-purple-600 text-slate-300 hover:text-white rounded-xl border border-slate-800 transition">
+                    💻 Custom PCs
+                </a>
+                
+                <a href="#portfolio" class="px-3 py-2 bg-slate-900 hover:bg-indigo-600 text-slate-300 hover:text-white rounded-xl border border-slate-800 transition">
+                    🌐 Web Apps
+                </a>
+
+                <a href="{% url 'studio:track_order' %}" class="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 rounded-xl border border-amber-500/30 transition">
+                    Track Order
+                </a>
+            </nav>
+
+            <!-- Medium Screens Mobile CTA -->
+            <div class="flex xl:hidden items-center gap-2">
+                <a href="{% url 'studio:track_order' %}" class="px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold rounded-xl">
+                    Track Order
+                </a>
+                <a href="https://wa.me/94771234567?text=Hi%20Damith!%20I%20have%20an%20inquiry." target="_blank" class="px-3.5 py-1.5 bg-emerald-500 text-slate-950 font-black text-xs rounded-xl shadow-md">
+                    WhatsApp
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Mobile Horizontal Quick Bar -->
+        <div class="xl:hidden border-t border-slate-800 bg-[#080B11]/90 backdrop-blur-md px-4 py-2.5 overflow-x-auto no-scrollbar">
+            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider whitespace-nowrap min-w-max">
+                <a href="{% url 'studio:showcase' 'mugs' %}" class="px-3 py-1.5 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-xl">☕ Print Mug</a>
+                <a href="{% url 'studio:showcase' 'photos' %}" class="px-3 py-1.5 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-xl">🖼️ Photo Framing</a>
+                <a href="https://cv200.lk" target="_blank" class="px-3 py-1.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-xl">📄 CV Builder</a>
+                <a href="https://gamegear.lk" target="_blank" class="px-3 py-1.5 bg-purple-500/10 text-purple-400 border border-purple-500/20 rounded-xl">💻 Build PC</a>
+                <a href="#portfolio" class="px-3 py-1.5 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-xl">🌐 Web Apps</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- FLOATING WHATSAPP ASSISTANT -->
+    <a href="https://wa.me/94771234567?text=Hi%20Damith!%20I%20have%20a%20question%20about%20your%20services." 
+       target="_blank" 
+       class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-5 py-3.5 rounded-2xl shadow-2xl shadow-emerald-500/30 flex items-center gap-3 transition hover:scale-105 active:scale-95 text-xs tracking-wider uppercase">
+        <span class="text-xl">💬</span>
+        <span>Quick WhatsApp Ask</span>
+    </a>
+
+    <!-- MAIN HERO CONTENT -->
+    <main class="pt-28 lg:pt-36 pb-16 flex-1">
+        
+        <!-- HERO HEADLINE -->
+        <section class="max-w-7xl mx-auto px-6 mb-12">
+            <div class="text-center max-w-3xl mx-auto space-y-4">
+                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-lg">
+                    <span>🎨 Custom Printing &bull; Computing &bull; Web Systems</span>
+                </span>
+                
+                <h1 class="font-display text-4xl sm:text-6xl font-black text-white tracking-tight leading-none">
+                    Print it. Frame it.<br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-200 to-amber-500">Build it. Craft it.</span>
+                </h1>
+                
+                <p class="text-slate-400 text-sm md:text-base leading-relaxed max-w-2xl mx-auto font-medium">
+                    What would you like to get done today? Select a service below to launch instant online ordering or explore solutions.
+                </p>
+            </div>
+        </section>
+
+<!-- FIVE LARGE TOP SERVICE CARDS WITH BACKGROUND IMAGES -->
+<section id="services" class="max-w-7xl mx-auto px-6 mb-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        
+        <!-- CARD 1: CUSTOM MUG PRINTING -->
+        <div class="bg-[#0F172A] border border-slate-800 hover:border-amber-500/80 rounded-3xl flex flex-col justify-between transition group hover:shadow-2xl hover:shadow-amber-500/20 relative overflow-hidden h-[420px]">
+            
+            <!-- 1. FULL VISIBILITY BACKGROUND IMAGE -->
+            <img src="{% static 'images/mug_background.jpg' %}" 
+                 alt="Custom Photo Mug" 
+                 class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition duration-500">
+
+            <!-- 2. BOTTOM-ONLY GRADIENT -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-[#0B0F17]/70 to-transparent"></div>
+
+            <!-- 3. TOP BADGES -->
+            <div class="relative z-10 p-6 flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-slate-950/60 border border-white/10 backdrop-blur-md flex items-center justify-center text-2xl shadow-lg">
+                    ☕
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-slate-950/70 backdrop-blur-md px-3 py-1 rounded-full border border-amber-500/30 shadow-md">
+                    Mug Printing Workshop
+                </span>
+            </div>
+
+            <!-- 4. BOTTOM CONTENT -->
+            <div class="relative z-10 p-6 space-y-4">
+                <h3 class="font-display font-black text-2xl md:text-3xl text-white tracking-tight drop-shadow-md group-hover:text-amber-400 transition">
+                    Custom Mug Printing
+                </h3>
+
+                <a href="{% url 'studio:showcase' 'mugs' %}" 
+                   class="w-full py-3.5 px-5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-between transition duration-300 shadow-xl shadow-amber-500/20 active:scale-95">
+                    <span>Launch Mug Workshop</span>
+                    <span class="text-base">&rarr;</span>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- CARD 2: PHOTO FRAMING & MOUNTS -->
+        <div class="bg-[#0F172A] border border-slate-800 hover:border-blue-500/80 rounded-3xl flex flex-col justify-between transition group hover:shadow-2xl hover:shadow-blue-500/20 relative overflow-hidden h-[420px]">
+            
+            <!-- 1. FULL VISIBILITY BACKGROUND IMAGE -->
+            <img src="{% static 'images/frame_background.jpg' %}" 
+                 alt="Beach Scenery Photo Frame" 
+                 class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition duration-500">
+
+            <!-- 2. BOTTOM-ONLY GRADIENT -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-[#0B0F17]/70 to-transparent"></div>
+
+            <!-- 3. TOP BADGES -->
+            <div class="relative z-10 p-6 flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-slate-950/60 border border-white/10 backdrop-blur-md flex items-center justify-center text-2xl shadow-lg">
+                    🖼️
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-slate-950/70 backdrop-blur-md px-3 py-1 rounded-full border border-blue-500/30 shadow-md">
+                    Photo & Framing Studio
+                </span>
+            </div>
+
+            <!-- 4. BOTTOM CONTENT -->
+            <div class="relative z-10 p-6 space-y-4">
+                <h3 class="font-display font-black text-2xl md:text-3xl text-white tracking-tight drop-shadow-md group-hover:text-blue-400 transition">
+                    Photo Framing & Mounts
+                </h3>
+
+                <a href="{% url 'studio:showcase' 'photos' %}" 
+                   class="w-full py-3.5 px-5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-between transition duration-300 shadow-xl shadow-blue-600/20 active:scale-95">
+                    <span>Browse Frame Options</span>
+                    <span class="text-base">&rarr;</span>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- CARD 3: CV200 RESUME BUILDER -->
+        <div class="bg-[#0F172A] border border-slate-800 hover:border-emerald-500/80 rounded-3xl flex flex-col justify-between transition group hover:shadow-2xl hover:shadow-emerald-500/20 relative overflow-hidden h-[420px]">
+            
+            <!-- 1. FULL VISIBILITY BACKGROUND IMAGE -->
+            <img src="{% static 'images/cv_background.jpg' %}" 
+                 alt="ATS Resume Builder" 
+                 class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition duration-500">
+
+            <!-- 2. BOTTOM-ONLY GRADIENT -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-[#0B0F17]/70 to-transparent"></div>
+
+            <!-- 3. TOP BADGES -->
+            <div class="relative z-10 p-6 flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-slate-950/60 border border-white/10 backdrop-blur-md flex items-center justify-center text-2xl shadow-lg">
+                    📄
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-emerald-400 bg-slate-950/70 backdrop-blur-md px-3 py-1 rounded-full border border-emerald-500/30 shadow-md">
+                    cv200.lk
+                </span>
+            </div>
+
+            <!-- 4. BOTTOM CONTENT -->
+            <div class="relative z-10 p-6 space-y-4">
+                <h3 class="font-display font-black text-2xl md:text-3xl text-white tracking-tight drop-shadow-md group-hover:text-emerald-400 transition">
+                    Professional CV Builder
+                </h3>
+
+                <a href="https://cv200.lk" target="_blank" 
+                   class="w-full py-3.5 px-5 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-between transition duration-300 shadow-xl shadow-emerald-500/20 active:scale-95">
+                    <span>Create CV on CV200</span>
+                    <span class="text-base">&rarr;</span>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- CARD 4: GAMEGEAR CUSTOM PCS -->
+        <div class="bg-[#0F172A] border border-slate-800 hover:border-purple-500/80 rounded-3xl flex flex-col justify-between transition group hover:shadow-2xl hover:shadow-purple-500/20 relative overflow-hidden h-[420px]">
+            
+            <!-- 1. FULL VISIBILITY BACKGROUND IMAGE -->
+            <img src="{% static 'images/custom_pcs.jpg' %}" 
+                 alt="Custom Gaming PC RGB Workstation" 
+                 class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition duration-500">
+
+            <!-- 2. BOTTOM-ONLY GRADIENT -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-[#0B0F17]/70 to-transparent"></div>
+
+            <!-- 3. TOP BADGES -->
+            <div class="relative z-10 p-6 flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-slate-950/60 border border-white/10 backdrop-blur-md flex items-center justify-center text-2xl shadow-lg">
+                    💻
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-purple-400 bg-slate-950/70 backdrop-blur-md px-3 py-1 rounded-full border border-purple-500/30 shadow-md">
+                    gamegear.lk
+                </span>
+            </div>
+
+            <!-- 4. BOTTOM CONTENT -->
+            <div class="relative z-10 p-6 space-y-4">
+                <h3 class="font-display font-black text-2xl md:text-3xl text-white tracking-tight drop-shadow-md group-hover:text-purple-400 transition">
+                    Custom Gaming PCs
+                </h3>
+
+                <a href="https://gamegear.lk" target="_blank" 
+                   class="w-full py-3.5 px-5 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-between transition duration-300 shadow-xl shadow-purple-600/20 active:scale-95">
+                    <span>Shop PC Rigs at GameGear</span>
+                    <span class="text-base">&rarr;</span>
+                </a>
+            </div>
+
+        </div>
+
+        <!-- CARD 5: WEB & SOFTWARE DEVELOPMENT -->
+        <div class="bg-[#0F172A] border border-slate-800 hover:border-indigo-500/80 rounded-3xl flex flex-col justify-between transition group hover:shadow-2xl hover:shadow-indigo-500/20 relative overflow-hidden h-[420px] md:col-span-2 lg:col-span-2">
+            
+            <!-- 1. FULL VISIBILITY BACKGROUND IMAGE -->
+            <img src="{% static 'images/app_development.jpg' %}" 
+                 alt="Code Development Screen" 
+                 class="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition duration-500">
+
+            <!-- 2. BOTTOM-ONLY GRADIENT -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0B0F17] via-[#0B0F17]/70 to-transparent"></div>
+
+            <!-- 3. TOP BADGES -->
+            <div class="relative z-10 p-6 flex items-center justify-between">
+                <div class="w-12 h-12 rounded-2xl bg-slate-950/60 border border-white/10 backdrop-blur-md flex items-center justify-center text-2xl shadow-lg">
+                    ⚡
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-widest text-indigo-400 bg-slate-950/70 backdrop-blur-md px-3 py-1 rounded-full border border-indigo-500/30 shadow-md">
+                    Software Solutions Lab
+                </span>
+            </div>
+
+            <!-- 4. BOTTOM CONTENT -->
+            <div class="relative z-10 p-6 space-y-4">
+                <h3 class="font-display font-black text-2xl md:text-3xl text-white tracking-tight drop-shadow-md group-hover:text-indigo-400 transition">
+                    Web Apps & Custom POS Systems
+                </h3>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <a href="#portfolio" 
+                       class="py-3.5 px-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-between transition duration-300 shadow-xl shadow-indigo-600/20 active:scale-95 flex-1">
+                        <span>View Software Portfolio</span>
+                        <span class="text-base">&rarr;</span>
+                    </a>
+                    <a href="https://wa.me/94771234567?text=Hi%20Damith!%20I%20want%20to%20discuss%20a%20custom%20software%20project." target="_blank" 
+                       class="py-3.5 px-5 rounded-2xl bg-slate-950/90 hover:bg-slate-900 text-slate-200 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition duration-300 border border-slate-700 active:scale-95">
+                        <span class="text-emerald-400 text-base">💬</span>
+                        <span>Consult on WhatsApp</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+        <!-- ARTISAN WORKFLOW STRIP -->
+        <section class="max-w-7xl mx-auto px-6 py-12">
+            <div class="bg-[#131B2E] border border-slate-800 rounded-3xl p-8">
+                <div class="text-center max-w-xl mx-auto mb-10">
+                    <span class="text-xs font-bold uppercase tracking-widest text-amber-500">Transparent Quality Guarantee</span>
+                    <h2 class="font-display text-2xl font-bold text-white mt-1">Our 4-Step Print & Build Workflow</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 text-center">
+                        <div class="w-9 h-9 rounded-full bg-amber-500/10 text-amber-400 font-black text-xs flex items-center justify-center mx-auto mb-3 border border-amber-500/20">1</div>
+                        <h4 class="font-bold text-white text-sm">Select Product & Layout</h4>
+                        <p class="text-slate-400 text-xs mt-1.5">Pick your mug, frame, or PC specs via our quick online forms.</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 text-center">
+                        <div class="w-9 h-9 rounded-full bg-amber-500/10 text-amber-400 font-black text-xs flex items-center justify-center mx-auto mb-3 border border-amber-500/20">2</div>
+                        <h4 class="font-bold text-white text-sm">Upload Photos & Requests</h4>
+                        <p class="text-slate-400 text-xs mt-1.5">Attach your photos or special custom text greetings directly.</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 text-center">
+                        <div class="w-9 h-9 rounded-full bg-amber-500/10 text-amber-400 font-black text-xs flex items-center justify-center mx-auto mb-3 border border-amber-500/20">3</div>
+                        <h4 class="font-bold text-white text-sm">WhatsApp Proof Approval</h4>
+                        <p class="text-slate-400 text-xs mt-1.5">Review a digital artwork proof on WhatsApp before printing begins.</p>
+                    </div>
+
+                    <div class="bg-slate-900/60 border border-slate-800/80 rounded-2xl p-5 text-center">
+                        <div class="w-9 h-9 rounded-full bg-amber-500/10 text-amber-400 font-black text-xs flex items-center justify-center mx-auto mb-3 border border-amber-500/20">4</div>
+                        <h4 class="font-bold text-white text-sm">Precision Craft & Delivery</h4>
+                        <p class="text-slate-400 text-xs mt-1.5">Crafted, heat-pressed or framed, and delivered islandwide.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REVIEWS GRID -->
+        {% if reviews %}
+        <section class="max-w-7xl mx-auto px-6 py-12">
+            <div class="text-center max-w-xl mx-auto mb-10">
+                <span class="text-xs font-bold uppercase tracking-widest text-amber-500">Verified Testimonials</span>
+                <h2 class="font-display text-2xl font-bold text-white mt-1">What Our Clients Say</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for review in reviews %}
+                <div class="bg-[#131B2E] border border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-1 text-amber-400 text-xs mb-3">
+                            {% if review.rating == 5 %}★★★★★{% elif review.rating == 4 %}★★★★☆{% else %}★★★☆☆{% endif %}
+                        </div>
+                        <p class="text-slate-300 text-xs italic leading-relaxed">"{{ review.comment }}"</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-white text-xs block">{{ review.client_name|default:review.name }}</span>
+                            <span class="text-[10px] text-slate-500 block">{{ review.location|default:"Verified Customer" }}</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">{{ review.service|default:"Print & Web" }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- PORTFOLIO SHOWCASE SECTION (Lazy Loaded via HTMX) -->
+        <section id="portfolio" class="max-w-7xl mx-auto px-6 pt-12 border-t border-slate-800/80">
+            <div class="mb-6">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-500">Software & Web Showcase</span>
+                <h2 class="font-display text-2xl font-bold text-white mt-1">Recent Enterprise Systems & Web Applications</h2>
+            </div>
+            
+            <div hx-get="{% url 'portfolio_lazy_list' %}"
+                 hx-trigger="revealed"
+                 hx-swap="outerHTML"
+                 class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Skeleton Loader -->
+                <div class="h-64 bg-[#131B2E] border border-slate-800 rounded-2xl animate-pulse p-6">
+                    <div class="w-full h-36 bg-slate-900 rounded-xl mb-3"></div>
+                    <div class="h-3 bg-slate-900 rounded w-1/4 mb-2"></div>
+                    <div class="h-5 bg-slate-900 rounded w-3/4"></div>
+                </div>
+                <div class="h-64 bg-[#131B2E] border border-slate-800 rounded-2xl animate-pulse p-6">
+                    <div class="w-full h-36 bg-slate-900 rounded-xl mb-3"></div>
+                    <div class="h-3 bg-slate-900 rounded w-1/4 mb-2"></div>
+                    <div class="h-5 bg-slate-900 rounded w-3/4"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="contact" class="bg-[#080B11] border-t border-slate-800/80 py-12 text-slate-400 text-xs">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <span class="font-display font-bold text-white text-base block mb-2">Damith Graphics</span>
+                <p class="leading-relaxed">Full-stack web software engineering, custom sublimation photo printing, resin portrait framing, and computing hardware services in Nuwara Eliya, Sri Lanka.</p>
+            </div>
+            <div>
+                <span class="font-bold text-slate-200 uppercase tracking-wider block mb-2">Quick Platform Links</span>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'studio:showcase' 'mugs' %}" class="hover:text-amber-400 transition">Custom Mug Printing Studio</a></li>
+                    <li><a href="{% url 'studio:showcase' 'photos' %}" class="hover:text-amber-400 transition">Photo Framing & Resin Mounts</a></li>
+                    <li><a href="https://cv200.lk" target="_blank" class="hover:text-emerald-400 transition">CV200.lk Professional Resume Builder</a></li>
+                    <li><a href="https://gamegear.lk" target="_blank" class="hover:text-purple-400 transition">GameGear.lk Custom Gaming Rigs</a></li>
+                    <li><a href="{% url 'studio:track_order' %}" class="hover:text-amber-400 transition">Track Your Studio Order</a></li>
+                </ul>
+            </div>
+            <div>
+                <span class="font-bold text-slate-200 uppercase tracking-wider block mb-2">Direct Contact & Pickup</span>
+                <p class="text-slate-300 font-medium leading-relaxed">
+                    WhatsApp: +94 77 123 4567<br>
+                    Location: Nuwara Eliya, Sri Lanka<br>
+                    Operating Hours: Mon - Sat (8:30 AM - 6:30 PM)
+                </p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 mt-8 pt-6 border-t border-slate-800/50 text-center text-[11px] text-slate-500">
+            &copy; 2026 DamithGraphics.lk. All rights reserved.
+        </div>
+    </footer>
+
+</body>
+</html>

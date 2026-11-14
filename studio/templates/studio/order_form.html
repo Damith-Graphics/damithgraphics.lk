@@ -1,0 +1,393 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customize {{ item.title }} | Damith Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .step-panel {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+            position: absolute; 
+            inset: 0; 
+            padding: 1.5rem;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between;
+            overflow-y: auto;
+        }
+        @media (min-width: 640px) {
+            .step-panel { padding: 2rem 2.5rem; }
+        }
+        .step-active { transform: translate3d(0, 0, 0); opacity: 1; pointer-events: auto; z-index: 20; }
+        .step-left-out { transform: translate3d(-100%, 0, 0); opacity: 0; pointer-events: none; z-index: 10; }
+        .step-right-hidden { transform: translate3d(100%, 0, 0); opacity: 0; pointer-events: none; z-index: 10; }
+        
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #0F172A; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+    </style>
+</head>
+<body class="bg-slate-950/90 backdrop-blur-md min-h-screen flex items-center justify-center p-2 sm:p-4 font-sans text-slate-100 antialiased overflow-hidden">
+
+    <!-- RESPONSIVE MODAL CONTAINER -->
+    <div class="bg-[#0F172A] border border-slate-800 rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-[94vw] h-[92vh] max-h-[900px] overflow-hidden relative flex flex-col justify-between">
+        
+        <!-- Top Modal Header Bar -->
+        <div class="px-5 sm:px-8 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 sticky top-0 z-30 shrink-0">
+            <div class="flex items-center gap-3.5">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-400 text-slate-950 font-black flex items-center justify-center text-xl sm:text-2xl shadow-md shadow-amber-500/20">
+                    {% if item.category.slug == 'mugs' %}☕{% else %}🖼️{% endif %}
+                </div>
+                <div>
+                    <h2 class="text-base sm:text-xl font-black text-white tracking-tight leading-none">{{ item.title }}</h2>
+                    <span class="text-xs font-bold text-amber-500 mt-1 block">Base Price: LKR {{ item.base_price }}</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <span id="step-label" class="text-[10px] sm:text-xs font-black uppercase tracking-wider text-amber-400 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20">Step 1 of 4</span>
+                <a href="{% url 'studio:showcase' item.category.slug %}" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center font-bold text-base transition border border-slate-700" title="Close & Return">
+                    ✕
+                </a>
+            </div>
+        </div>
+
+        <!-- FORM CONTAINER -->
+        <form id="order-wizard-form" method="POST" action="{% url 'studio:create_order' item.id %}" enctype="multipart/form-data" class="flex-1 relative overflow-hidden">
+            {% csrf_token %}
+            <input type="hidden" id="order_mode" name="order_mode" value="template">
+            <input type="hidden" id="selected_template_id" name="selected_template" value="">
+
+            <!-- STEP 1: DESIGN PATH -->
+            <div id="step-1" class="step-panel step-active custom-scroll">
+                <div class="max-w-4xl mx-auto w-full py-4">
+                    <div class="text-center max-w-2xl mx-auto mb-8">
+                        <span class="px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/20 inline-block mb-3">Customization Path</span>
+                        <h3 class="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">How would you like to design your {{ item.title }}?</h3>
+                        <p class="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">Choose a pre-built studio graphic layout or request a custom design crafted by our artists.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                        <div onclick="selectDesignMode('template')" class="group p-6 sm:p-8 bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-800 hover:border-amber-500 rounded-3xl cursor-pointer transition-all duration-300 flex flex-col justify-between shadow-2xl hover:-translate-y-1">
+                            <div>
+                                <div class="flex items-center justify-between mb-6">
+                                    <span class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-3xl">🎨</span>
+                                    <span class="text-xs font-black text-emerald-400 bg-emerald-500/10 px-3.5 py-1.5 rounded-full border border-emerald-500/20">Standard Price</span>
+                                </div>
+                                <h4 class="font-black text-white text-lg sm:text-xl group-hover:text-amber-400 transition">Pre-Built Layout</h4>
+                                <p class="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">Select from our library of curated graphic print layouts crafted specifically for {{ item.title }}.</p>
+                            </div>
+                            <div class="mt-8 pt-4 border-t border-slate-800 flex items-center justify-between">
+                                <span class="text-xs sm:text-sm font-black text-amber-400">Choose Design &rarr;</span>
+                                <span class="text-xs font-bold text-slate-400">LKR {{ item.base_price }}</span>
+                            </div>
+                        </div>
+
+                        <div onclick="selectDesignMode('custom')" class="group p-6 sm:p-8 bg-slate-900/90 hover:bg-slate-800 border-2 border-slate-800 hover:border-amber-500 rounded-3xl cursor-pointer transition-all duration-300 flex flex-col justify-between shadow-2xl hover:-translate-y-1">
+                            <div>
+                                <div class="flex items-center justify-between mb-6">
+                                    <span class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-3xl">✨</span>
+                                    <span class="text-xs font-black text-amber-400 bg-amber-500/10 px-3.5 py-1.5 rounded-full border border-amber-500/20">+ LKR 300 Fee</span>
+                                </div>
+                                <h4 class="font-black text-white text-lg sm:text-xl group-hover:text-amber-400 transition">Custom Artwork Request</h4>
+                                <p class="text-xs sm:text-sm text-slate-400 mt-2 leading-relaxed">Our designers will custom compose your print layout based on your special instructions and uploaded photos.</p>
+                            </div>
+                            <div class="mt-8 pt-4 border-t border-slate-800 flex items-center justify-between">
+                                <span class="text-xs sm:text-sm font-black text-amber-400">Request Custom &rarr;</span>
+                                <span class="text-xs font-bold text-slate-400">Base + LKR 300</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-[11px] text-center text-slate-500 mt-4">Step 1 of 4 &bull; Select an option to proceed</p>
+            </div>
+
+            <!-- STEP 2: TEMPLATES WITH CATEGORY TABS -->
+            <div id="step-2" class="step-panel step-right-hidden custom-scroll">
+                <div class="max-w-7xl mx-auto w-full flex flex-col h-full justify-between">
+                    <div>
+                        <!-- Header & Back Button -->
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">Select Design Layout</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">Filter by occasion and tap a layout to select.</p>
+                            </div>
+                            <button type="button" onclick="goToStep(1)" class="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white font-bold text-xs rounded-xl transition border border-slate-700">&larr; Back</button>
+                        </div>
+
+                        <!-- CATEGORY FILTER PILLS -->
+                        <div class="flex items-center gap-2 overflow-x-auto pb-3 mb-4 custom-scroll border-b border-slate-800/80">
+                            <!-- 'All' Button -->
+                            <button type="button" onclick="filterTemplates('all', this)" class="category-pill active-pill px-4 py-2 bg-amber-500 text-slate-950 font-black text-xs rounded-xl transition shrink-0">
+                                All Layouts
+                            </button>
+
+                            <!-- Dynamic Category Buttons -->
+                            {% for cat in template_categories %}
+                            <button type="button" onclick="filterTemplates('cat-{{ cat.id }}', this)" class="category-pill px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold text-xs rounded-xl transition shrink-0 border border-slate-700">
+                                {{ cat.name }}
+                            </button>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Template Grid -->
+                        <div id="templates-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 pt-2">
+                            {% for cat in template_categories %}
+                                {% for tpl in cat.templates.all %}
+                                <div data-category="cat-{{ cat.id }}" onclick="chooseTemplate('{{ tpl.id }}', this)" class="template-item tpl-card border-2 border-slate-800 hover:border-amber-500 rounded-2xl p-3.5 cursor-pointer bg-slate-900 transition-all duration-300 text-center group hover:-translate-y-1 shadow-lg flex flex-col justify-between">
+                                    
+                                    <!-- Full Image Preview Container -->
+                                    <div class="w-full h-44 sm:h-52 bg-slate-950/80 rounded-xl overflow-hidden mb-3 p-2 relative flex items-center justify-center border border-slate-800/60">
+                                        {% if tpl.preview_image %}
+                                        <img src="{{ tpl.preview_image.url }}" alt="{{ tpl.template_code }}" class="max-w-full max-h-full object-contain group-hover:scale-105 transition duration-300">
+                                        {% else %}
+                                        <div class="w-full h-full flex items-center justify-center text-xs font-bold text-slate-500">Preview Image</div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="flex items-center justify-between px-1">
+                                        <div>
+                                            <span class="text-xs font-black text-slate-200 uppercase tracking-wider block text-left">{{ tpl.template_code }}</span>
+                                            <span class="text-[10px] text-slate-500 font-bold block text-left mt-0.5">{{ cat.name }}</span>
+                                        </div>
+                                        <span class="text-[11px] font-bold text-amber-400 group-hover:underline">Select &rarr;</span>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="col-span-4 py-8 text-center text-slate-500 text-sm">No layouts in this category yet.</div>
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Empty State Message when Filter returns 0 items -->
+                        <div id="no-templates-msg" class="hidden py-16 text-center text-slate-500 text-sm">
+                            No design layouts match this category filter. Try selecting another category or "All Layouts".
+                        </div>
+                    </div>
+
+                    <!-- Bottom Status Bar -->
+                    <div class="pt-4 border-t border-slate-800 flex items-center justify-between shrink-0 mt-4">
+                        <span class="text-xs text-slate-500">Click a design layout to continue</span>
+                        <button type="button" onclick="goToStep(1)" class="text-xs font-bold text-amber-500 hover:underline">&larr; Change Mode</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: UPLOADS & QUANTITY -->
+            <div id="step-3" class="step-panel step-right-hidden custom-scroll">
+                <div class="max-w-4xl mx-auto w-full py-2 space-y-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">Upload Photos & Custom Text</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Attach photos for printing and specify item quantity.</p>
+                        </div>
+                        <button type="button" onclick="handleStep3Back()" class="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white font-bold text-xs rounded-xl transition border border-slate-700">&larr; Back</button>
+                    </div>
+
+                    <!-- Quantity Input -->
+                    <div class="bg-slate-900/90 p-4 rounded-2xl border border-slate-800 flex items-center justify-between shadow-lg">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-wider text-amber-400">Item Quantity</label>
+                            <span class="text-[11px] text-slate-400 mt-0.5 block">Base Unit Price: LKR {{ item.base_price }}</span>
+                        </div>
+                        <input type="number" id="quantity-input" name="quantity" value="1" min="1" max="100" onchange="calculateFinalPrice()" onkeyup="calculateFinalPrice()" class="w-24 text-center font-black bg-slate-800 border border-slate-700 text-white rounded-xl py-2.5 text-base focus:outline-none focus:border-amber-500">
+                    </div>
+
+                    <!-- Photo Upload Slots -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-black uppercase tracking-wider text-slate-200">Attach Photos (Up to 6)</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                            <input type="file" name="photo_1" accept="image/*" onchange="calculateFinalPrice()" class="photo-input text-xs bg-slate-900 border border-slate-800 text-slate-300 rounded-xl p-2.5 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-amber-500/10 file:text-amber-400 file:font-bold">
+                            <input type="file" name="photo_2" accept="image/*" onchange="calculateFinalPrice()" class="photo-input text-xs bg-slate-900 border border-slate-800 text-slate-300 rounded-xl p-2.5 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-amber-500/10 file:text-amber-400 file:font-bold">
+                            <input type="file" name="photo_3" accept="image/*" onchange="calculateFinalPrice()" class="photo-input text-xs bg-slate-900 border border-slate-800 text-slate-300 rounded-xl p-2.5 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-amber-500/10 file:text-amber-400 file:font-bold">
+                            <input type="file" name="photo_4" accept="image/*" onchange="calculateFinalPrice()" class="photo-input text-xs bg-slate-900 border border-slate-800 text-slate-300 rounded-xl p-2.5 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-amber-500/10 file:text-amber-400 file:font-bold">
+                            <input type="file" name="photo_5" accept="image/*" onchange="calculateFinalPrice()" class="photo-input text-xs bg-slate-900 border border-slate-800 text-slate-300 rounded-xl p-2.5 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-amber-500/10 file:text-amber-400 file:font-bold">
+                            <input type="file" name="photo_6" accept="image/*" onchange="calculateFinalPrice()" class="photo-input text-xs bg-slate-900 border border-slate-800 text-slate-300 rounded-xl p-2.5 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:bg-amber-500/10 file:text-amber-400 file:font-bold">
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">Attaching more than 4 photos adds an extra LKR 200 setup fee.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-wider text-slate-200 mb-1.5">Custom Greeting / Text</label>
+                        <input type="text" name="custom_text" placeholder="e.g., Happy Birthday Nimal!" class="w-full text-sm font-medium bg-slate-900 border border-slate-800 text-white rounded-xl p-3.5 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div class="max-w-4xl mx-auto w-full pt-4 border-t border-slate-800 mt-auto">
+                    <button type="button" onclick="goToStep(4)" class="w-full py-3.5 sm:py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-xl transition duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                        <span>Continue to Delivery & Contact</span> &rarr;
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 4: CONTACT & CHECKOUT -->
+            <div id="step-4" class="step-panel step-right-hidden custom-scroll">
+                <div class="max-w-4xl mx-auto w-full py-2 space-y-5">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">Contact & Delivery Options</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Provide contact information to complete your order.</p>
+                        </div>
+                        <button type="button" onclick="goToStep(3)" class="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white font-bold text-xs rounded-xl transition border border-slate-700">&larr; Back</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1.5">Your Full Name *</label>
+                            <input type="text" name="customer_name" required placeholder="Full Name" class="w-full text-sm font-medium bg-slate-900 border border-slate-800 text-white rounded-xl p-3.5 focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1.5">WhatsApp Number *</label>
+                            <input type="text" name="whatsapp_number" required placeholder="077XXXXXXX" class="w-full text-sm font-medium bg-slate-900 border border-slate-800 text-white rounded-xl p-3.5 focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-wider text-slate-300 mb-2">Fulfillment Choice</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <label class="p-4 border-2 border-slate-800 rounded-2xl flex items-center justify-between cursor-pointer text-sm font-black bg-slate-900 hover:border-amber-500 transition">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="delivery_type" value="courier" checked onclick="calculateFinalPrice()" class="accent-amber-500 w-4 h-4">
+                                    <span>Courier Delivery</span>
+                                </div>
+                                <span class="text-xs text-amber-400">+LKR 400</span>
+                            </label>
+
+                            <label class="p-4 border-2 border-slate-800 rounded-2xl flex items-center justify-between cursor-pointer text-sm font-black bg-slate-900 hover:border-amber-500 transition">
+                                <div class="flex items-center gap-3">
+                                    <input type="radio" name="delivery_type" value="pickup" onclick="calculateFinalPrice()" class="accent-amber-500 w-4 h-4">
+                                    <span>Self Pickup</span>
+                                </div>
+                                <span class="text-xs text-emerald-400">FREE</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black uppercase tracking-wider text-slate-300 mb-1.5">Delivery Address</label>
+                        <input type="text" name="delivery_address" placeholder="Street Address, City" class="w-full text-sm font-medium bg-slate-900 border border-slate-800 text-white rounded-xl p-3.5 focus:outline-none focus:border-amber-500">
+                    </div>
+                </div>
+
+                <div class="max-w-4xl mx-auto w-full p-4 sm:p-5 bg-slate-900/90 border border-slate-800 rounded-2xl flex items-center justify-between shadow-2xl mt-auto">
+                    <div>
+                        <span class="text-[10px] sm:text-xs text-slate-400 font-extrabold uppercase tracking-wider block">Total Amount Payable</span>
+                        <span id="final-price-display" class="text-2xl sm:text-3xl font-black text-amber-400 tracking-tight">LKR {{ item.base_price }}</span>
+                    </div>
+
+                    <button type="submit" class="px-6 sm:px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs sm:text-sm rounded-xl shadow-xl transition duration-300 flex items-center gap-2 cursor-pointer">
+                        <span>Confirm & Place Order</span> &rarr;
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let currentStep = 1;
+        const itemBasePrice = parseFloat("{{ item.base_price }}") || 0;
+
+        function goToStep(step) {
+            const currentEl = document.getElementById(`step-${currentStep}`);
+            const nextEl = document.getElementById(`step-${step}`);
+
+            if (step > currentStep) {
+                currentEl.className = "step-panel step-left-out custom-scroll";
+                nextEl.className = "step-panel step-active custom-scroll";
+            } else {
+                currentEl.className = "step-panel step-right-hidden custom-scroll";
+                nextEl.className = "step-panel step-active custom-scroll";
+            }
+
+            document.getElementById('step-label').innerText = `Step ${step} of 4`;
+            currentStep = step;
+            calculateFinalPrice();
+        }
+
+        function selectDesignMode(mode) {
+            document.getElementById('order_mode').value = mode;
+            if (mode === 'custom') {
+                goToStep(3);
+            } else {
+                goToStep(2);
+            }
+        }
+
+        function chooseTemplate(tplId, cardEl) {
+            document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('border-amber-500', 'bg-slate-800'));
+            cardEl.classList.add('border-amber-500', 'bg-slate-800');
+            document.getElementById('selected_template_id').value = tplId;
+            setTimeout(() => goToStep(3), 200);
+        }
+
+        function handleStep3Back() {
+            const mode = document.getElementById('order_mode').value;
+            if (mode === 'custom') {
+                goToStep(1);
+            } else {
+                goToStep(2);
+            }
+        }
+
+        function calculateFinalPrice() {
+            let quantity = parseInt(document.getElementById('quantity-input')?.value || 1);
+            if (isNaN(quantity) || quantity < 1) quantity = 1;
+
+            let total = itemBasePrice * quantity;
+            const mode = document.getElementById('order_mode').value;
+            const deliveryType = document.querySelector('input[name="delivery_type"]:checked')?.value;
+
+            if (mode === 'custom') total += 300;
+            if (deliveryType === 'courier') total += 400;
+
+            let photoCount = 0;
+            document.querySelectorAll('.photo-input').forEach(input => {
+                if (input.files && input.files.length > 0) photoCount++;
+            });
+            if (photoCount > 4) total += 200;
+
+            document.getElementById('final-price-display').innerText = `LKR ${total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                window.location.href = "{% url 'studio:showcase' item.category.slug %}";
+            }
+        });
+
+        function filterTemplates(catId, btnEl) {
+    // 1. Update Active Pill Button Styling
+    document.querySelectorAll('.category-pill').forEach(pill => {
+        pill.className = "category-pill px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold text-xs rounded-xl transition shrink-0 border border-slate-700";
+    });
+    btnEl.className = "category-pill active-pill px-4 py-2 bg-amber-500 text-slate-950 font-black text-xs rounded-xl transition shrink-0";
+
+    // 2. Filter Grid Items
+    const items = document.querySelectorAll('.template-item');
+    let visibleCount = 0;
+
+    items.forEach(item => {
+        if (catId === 'all' || item.getAttribute('data-category') === catId) {
+            item.style.display = 'flex';
+            visibleCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+
+    // 3. Toggle Empty Message
+    const emptyMsg = document.getElementById('no-templates-msg');
+    if (visibleCount === 0) {
+        emptyMsg.classList.remove('hidden');
+    } else {
+        emptyMsg.classList.add('hidden');
+    }
+}
+    </script>
+
+</body>
+</html>

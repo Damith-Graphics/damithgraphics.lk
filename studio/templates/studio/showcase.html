@@ -1,0 +1,168 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} Showcase | Damith Graphics Studio{% endblock %}
+
+{% block extra_css %}
+<style>
+    .product-card {
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 25px 35px -10px rgba(11, 15, 23, 0.6), 0 12px 18px -6px rgba(245, 158, 11, 0.12);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- MAIN HEADER WITH EXACT LOGO, NAVIGATION PILLS & MOBILE QUICK BAR -->
+<header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-[#0B0F17]/95 backdrop-blur-xl border-b border-slate-800/90 shadow-md transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+        
+        <!-- Brand Logo & Name -->
+        <a href="/" class="flex items-center gap-3 group shrink-0">
+            <div class="p-1.5 bg-slate-900 rounded-xl border border-slate-800 group-hover:bg-amber-500/10 group-hover:border-amber-500/30 transition duration-300 shadow-sm">
+                <img src="{% static 'images/damith_graphics_logo.png' %}" alt="Damith Graphics Logo" class="w-8 h-8 object-contain">
+            </div>
+            <div>
+                <p class="font-black text-xl text-white tracking-tight leading-none">Damith <span class="text-amber-400">Graphics</span></p>
+                <span class="text-[10px] font-black text-slate-400 tracking-wider uppercase block mt-0.5">Digital & Print Studio</span>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation: Bold, High-Visibility Pills -->
+        <nav class="hidden xl:flex items-center gap-3 text-sm font-black tracking-tight">
+            <a href="{% url 'studio:showcase' 'mugs' %}" class="px-3.5 py-2 {% if category.slug == 'mugs' %}bg-amber-500 text-slate-950{% else %}bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950{% endif %} rounded-xl border border-amber-500/20 transition-all duration-200 shadow-sm hover:shadow-amber-500/20 hover:-translate-y-0.5">
+                ☕ Print Mug
+            </a>
+            
+            <a href="{% url 'studio:showcase' 'photos' %}" class="px-3.5 py-2 {% if category.slug == 'photos' %}bg-blue-600 text-white{% else %}bg-blue-500/10 hover:bg-blue-600 text-blue-400 hover:text-white{% endif %} rounded-xl border border-blue-500/20 transition-all duration-200 shadow-sm hover:shadow-blue-600/20 hover:-translate-y-0.5">
+                🖼️ Photo Framing
+            </a>
+            
+            <a href="https://cv200.lk" target="_blank" class="px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-xl border border-emerald-500/20 transition-all duration-200 shadow-sm hover:shadow-emerald-600/20 hover:-translate-y-0.5">
+                📄 CV Builder
+            </a>
+            
+            <a href="https://gamegear.lk" target="_blank" class="px-3.5 py-2 bg-purple-500/10 hover:bg-purple-600 text-purple-400 hover:text-white rounded-xl border border-purple-500/20 transition-all duration-200 shadow-sm hover:shadow-purple-600/20 hover:-translate-y-0.5">
+                💻 Build PC
+            </a>
+            
+            <a href="/#services" class="px-3.5 py-2 bg-indigo-500/10 hover:bg-indigo-600 text-indigo-400 hover:text-white rounded-xl border border-indigo-500/20 transition-all duration-200 shadow-sm hover:shadow-indigo-600/20 hover:-translate-y-0.5">
+                🌐 Web Design
+            </a>
+
+            <!-- Highlighted Portfolio CTA -->
+            <a href="/#portfolio" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-blue-600 text-white rounded-full transition-all duration-300 shadow-md shadow-slate-900/20 hover:shadow-blue-600/30 ml-2 group border border-slate-800">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="font-black text-sm">Portfolio</span>
+                <span class="text-xs group-hover:translate-x-1 transition duration-300">&rarr;</span>
+            </a>
+
+            <a href="/#contact" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-all duration-300 shadow-md shadow-blue-600/25 font-black text-sm shrink-0">
+                Get in Touch
+            </a>
+        </nav>
+
+        <!-- Medium Screens CTA Fallback -->
+        <div class="flex xl:hidden items-center gap-2">
+            <a href="/#portfolio" class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 text-white text-xs font-black rounded-full shadow-sm border border-slate-800">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Portfolio</span>
+            </a>
+            <a href="/#contact" class="px-4 py-2 bg-blue-600 text-white text-xs font-black rounded-full shadow-sm">
+                Contact
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Mobile Horizontal Quick Bar: Embossed Color Badges -->
+    <div class="xl:hidden border-t border-slate-800 bg-[#080B11]/90 backdrop-blur-md px-4 py-2.5 overflow-x-auto no-scrollbar">
+        <div class="flex items-center gap-2.5 text-xs font-black whitespace-nowrap min-w-max">
+            <a href="{% url 'studio:showcase' 'mugs' %}" class="px-3.5 py-2 bg-amber-500 text-slate-950 rounded-xl shadow-md shadow-amber-500/20 active:scale-95 transition">☕ Print Mug</a>
+            <a href="{% url 'studio:showcase' 'photos' %}" class="px-3.5 py-2 bg-blue-600 text-white rounded-xl shadow-md shadow-blue-600/20 active:scale-95 transition">🖼️ Photo Framing</a>
+            <a href="https://cv200.lk" target="_blank" class="px-3.5 py-2 bg-emerald-600 text-white rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition">📄 Create CV</a>
+            <a href="https://gamegear.lk" target="_blank" class="px-3.5 py-2 bg-purple-600 text-white rounded-xl shadow-md shadow-purple-600/20 active:scale-95 transition">💻 Build PC</a>
+            <a href="/#services" class="px-3.5 py-2 bg-indigo-600 text-white rounded-xl shadow-md shadow-indigo-600/20 active:scale-95 transition">🌐 Web Design</a>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="pt-28 pb-20">
+    <main class="max-w-7xl mx-auto px-6">
+        
+        <!-- SUB-NAVIGATION BAR -->
+        <div class="flex items-center justify-between mb-8 pb-4 border-b border-slate-800/80">
+            <a href="{% url 'studio:home' %}" class="inline-flex items-center gap-2 text-xs font-black text-slate-400 hover:text-amber-400 transition">
+                <span>&larr; Back to Categories</span>
+            </a>
+            <span class="text-xs font-black uppercase tracking-widest text-amber-400 bg-amber-500/10 px-3.5 py-1 rounded-full border border-amber-500/20">
+                {{ title }}
+            </span>
+        </div>
+
+        <!-- CATEGORY HEADER -->
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20 inline-block mb-3">
+                Product Collection
+            </span>
+            <h1 class="font-display text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
+                {{ title }}
+            </h1>
+            <p class="text-slate-400 text-base md:text-lg mt-3 leading-relaxed">
+                Select an item below to personalize with your photos or custom text.
+            </p>
+        </div>
+
+        <!-- PRODUCT ITEMS GRID -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for item in items %}
+            <div class="bg-[#131B2E] border border-slate-800 rounded-3xl overflow-hidden product-card flex flex-col justify-between shadow-2xl hover:border-amber-500/60 transition group">
+                <div>
+                    <!-- Product Image Box -->
+                    <div class="h-60 bg-[#0B0F17] overflow-hidden relative border-b border-slate-800/80">
+                        {% if item.featured_image %}
+                        <img src="{{ item.featured_image.url }}" alt="{{ item.title }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-slate-600 font-bold text-xs uppercase tracking-wider">
+                            No Preview Image
+                        </div>
+                        {% endif %}
+
+                        <span class="absolute top-4 left-4 text-xs font-black uppercase text-amber-400 bg-[#0B0F17]/90 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-amber-500/30 shadow-lg">
+                            LKR {{ item.base_price }}
+                        </span>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-6">
+                        <h3 class="font-display font-black text-white text-xl group-hover:text-amber-400 transition tracking-tight">
+                            {{ item.title }}
+                        </h3>
+                        <p class="text-slate-400 text-xs md:text-sm mt-2.5 leading-relaxed">
+                            {{ item.description }}
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Action CTA -->
+                <div class="p-6 pt-0">
+                    <a href="{% url 'studio:create_order' item.id %}" class="block w-full text-center py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl shadow-amber-500/10 transition duration-300 active:scale-95">
+                        Select & Customize &rarr;
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-3 text-center py-16 bg-[#131B2E] border border-slate-800 rounded-3xl text-slate-400">
+                <p class="text-base font-bold text-white">No {{ title }} items available in the catalog right now.</p>
+                <p class="text-xs text-slate-500 mt-1">Add items via your Django admin panel at /admin/studio/studioitem/.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+    </main>
+</div>
+{% endblock %}

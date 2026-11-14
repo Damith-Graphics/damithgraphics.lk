@@ -1,0 +1,163 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Studio | Custom Mug Printing & Photo Framing — Damith Graphics{% endblock %}
+
+{% block extra_css %}
+<style>
+    .category-card {
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 25px 35px -10px rgba(11, 15, 23, 0.5), 0 12px 18px -6px rgba(245, 158, 11, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- MAIN HEADER WITH EXACT LOGO, NAVIGATION PILLS & MOBILE QUICK BAR -->
+<header id="main-header" class="fixed top-0 left-0 right-0 z-50 bg-[#0B0F17]/95 backdrop-blur-xl border-b border-slate-800/90 shadow-md transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+        
+        <!-- Brand Logo & Name -->
+        <a href="/" class="flex items-center gap-3 group shrink-0">
+            <div class="p-1.5 bg-slate-900 rounded-xl border border-slate-800 group-hover:bg-amber-500/10 group-hover:border-amber-500/30 transition duration-300 shadow-sm">
+                <img src="{% static 'images/damith_graphics_logo.png' %}" alt="Damith Graphics Logo" class="w-8 h-8 object-contain">
+            </div>
+            <div>
+                <p class="font-black text-xl text-white tracking-tight leading-none">Damith <span class="text-amber-400">Graphics</span></p>
+                <span class="text-[10px] font-black text-slate-400 tracking-wider uppercase block mt-0.5">Digital & Print Studio</span>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation: Bold, High-Visibility Pills -->
+        <nav class="hidden xl:flex items-center gap-3 text-sm font-black tracking-tight">
+            <a href="{% url 'studio:showcase' 'mugs' %}" class="px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500 text-amber-400 hover:text-slate-950 rounded-xl border border-amber-500/20 transition-all duration-200 shadow-sm hover:shadow-amber-500/20 hover:-translate-y-0.5">
+                ☕ Print Mug
+            </a>
+            
+            <a href="{% url 'studio:showcase' 'photos' %}" class="px-3.5 py-2 bg-blue-500/10 hover:bg-blue-600 text-blue-400 hover:text-white rounded-xl border border-blue-500/20 transition-all duration-200 shadow-sm hover:shadow-blue-600/20 hover:-translate-y-0.5">
+                🖼️ Photo Framing
+            </a>
+            
+            <a href="https://cv200.lk" target="_blank" class="px-3.5 py-2 bg-emerald-500/10 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-xl border border-emerald-500/20 transition-all duration-200 shadow-sm hover:shadow-emerald-600/20 hover:-translate-y-0.5">
+                📄 CV Builder
+            </a>
+            
+            <a href="https://gamegear.lk" target="_blank" class="px-3.5 py-2 bg-purple-500/10 hover:bg-purple-600 text-purple-400 hover:text-white rounded-xl border border-purple-500/20 transition-all duration-200 shadow-sm hover:shadow-purple-600/20 hover:-translate-y-0.5">
+                💻 Build PC
+            </a>
+            
+            <a href="/#services" class="px-3.5 py-2 bg-indigo-500/10 hover:bg-indigo-600 text-indigo-400 hover:text-white rounded-xl border border-indigo-500/20 transition-all duration-200 shadow-sm hover:shadow-indigo-600/20 hover:-translate-y-0.5">
+                🌐 Web Design
+            </a>
+
+            <!-- Highlighted Portfolio CTA -->
+            <a href="/#portfolio" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-blue-600 text-white rounded-full transition-all duration-300 shadow-md shadow-slate-900/20 hover:shadow-blue-600/30 ml-2 group border border-slate-800">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="font-black text-sm">Portfolio</span>
+                <span class="text-xs group-hover:translate-x-1 transition duration-300">&rarr;</span>
+            </a>
+
+            <a href="/#contact" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-all duration-300 shadow-md shadow-blue-600/25 font-black text-sm shrink-0">
+                Get in Touch
+            </a>
+        </nav>
+
+        <!-- Medium Screens CTA Fallback -->
+        <div class="flex xl:hidden items-center gap-2">
+            <a href="/#portfolio" class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 text-white text-xs font-black rounded-full shadow-sm border border-slate-800">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Portfolio</span>
+            </a>
+            <a href="/#contact" class="px-4 py-2 bg-blue-600 text-white text-xs font-black rounded-full shadow-sm">
+                Contact
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Mobile Horizontal Quick Bar: Embossed Color Badges -->
+    <div class="xl:hidden border-t border-slate-800 bg-[#080B11]/90 backdrop-blur-md px-4 py-2.5 overflow-x-auto no-scrollbar">
+        <div class="flex items-center gap-2.5 text-xs font-black whitespace-nowrap min-w-max">
+            <a href="{% url 'studio:showcase' 'mugs' %}" class="px-3.5 py-2 bg-amber-500 text-slate-950 rounded-xl shadow-md shadow-amber-500/20 active:scale-95 transition">☕ Print Mug</a>
+            <a href="{% url 'studio:showcase' 'photos' %}" class="px-3.5 py-2 bg-blue-600 text-white rounded-xl shadow-md shadow-blue-600/20 active:scale-95 transition">🖼️ Photo Framing</a>
+            <a href="https://cv200.lk" target="_blank" class="px-3.5 py-2 bg-emerald-600 text-white rounded-xl shadow-md shadow-emerald-600/20 active:scale-95 transition">📄 Create CV</a>
+            <a href="https://gamegear.lk" target="_blank" class="px-3.5 py-2 bg-purple-600 text-white rounded-xl shadow-md shadow-purple-600/20 active:scale-95 transition">💻 Build PC</a>
+            <a href="/#services" class="px-3.5 py-2 bg-indigo-600 text-white rounded-xl shadow-md shadow-indigo-600/20 active:scale-95 transition">🌐 Web Design</a>
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="pt-28 pb-20">
+    
+    <!-- Category Selection Section -->
+    <section class="max-w-7xl mx-auto px-6 py-10">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+            <span class="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20 inline-block mb-3">
+                Custom Merchandise & Prints
+            </span>
+            <h1 class="font-display text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">
+                Select a Printing Category
+            </h1>
+            <p class="text-slate-400 text-base md:text-lg mt-3 leading-relaxed">Choose what you want to personalize today to explore designs, finishes, sizes, and instant price estimates.</p>
+        </div>
+
+        <!-- 2 LARGE EASY-TO-CLICK CATEGORY CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+
+            <!-- Category 1: Custom Mug Printing -->
+            <a href="{% url 'studio:showcase' category='mugs' %}" class="group relative bg-[#131B2E] border border-slate-800 rounded-3xl overflow-hidden category-card flex flex-col justify-between shadow-2xl hover:border-amber-500/60 transition">
+                <div class="h-80 bg-[#0B0F17] overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1514517220017-8ce97a34a7b6?auto=format&fit=crop&w=1200&q=80" 
+                         alt="Custom Printed Ceramic and Magic Mugs" 
+                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-90 group-hover:opacity-100"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#131B2E] via-[#131B2E]/40 to-transparent"></div>
+                    <span class="absolute top-4 left-4 bg-amber-500 text-slate-950 text-xs font-black uppercase px-3.5 py-1.5 rounded-full tracking-wider shadow-md">Category 01</span>
+                </div>
+                <div class="p-8 flex-1 flex flex-col justify-between -mt-12 relative z-10 bg-[#131B2E] rounded-t-3xl border-t border-slate-800/80">
+                    <div>
+                        <h2 class="font-display text-2xl md:text-3xl font-black text-white group-hover:text-amber-400 transition tracking-tight flex items-center justify-between">
+                            <span>Custom Mug Printing</span>
+                            <span class="text-amber-400 text-xl font-bold group-hover:translate-x-1 transition duration-300">&rarr;</span>
+                        </h2>
+                        <p class="text-slate-400 text-sm md:text-base mt-2.5 leading-relaxed">Dye-sublimation magic heat-changing mugs, white ceramic mugs, color-inner mugs, and personal photo designs.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Showcase Collection</span>
+                        <span class="text-xs font-extrabold text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20 group-hover:bg-amber-500 group-hover:text-slate-950 transition">Browse Mugs &rarr;</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Category 2: Photo Framing & Canvas -->
+            <a href="{% url 'studio:showcase' category='photos' %}" class="group relative bg-[#131B2E] border border-slate-800 rounded-3xl overflow-hidden category-card flex flex-col justify-between shadow-2xl hover:border-blue-500/60 transition">
+                <div class="h-80 bg-[#0B0F17] overflow-hidden relative">
+                    <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=1200&q=80" 
+                         alt="High Resolution Photo Frames and Canvas Prints" 
+                         class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-90 group-hover:opacity-100"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#131B2E] via-[#131B2E]/40 to-transparent"></div>
+                    <span class="absolute top-4 left-4 bg-blue-600 text-white text-xs font-black uppercase px-3.5 py-1.5 rounded-full tracking-wider shadow-md">Category 02</span>
+                </div>
+                <div class="p-8 flex-1 flex flex-col justify-between -mt-12 relative z-10 bg-[#131B2E] rounded-t-3xl border-t border-slate-800/80">
+                    <div>
+                        <h2 class="font-display text-2xl md:text-3xl font-black text-white group-hover:text-blue-400 transition tracking-tight flex items-center justify-between">
+                            <span>Photo Framing & Canvas</span>
+                            <span class="text-blue-400 text-xl font-bold group-hover:translate-x-1 transition duration-300">&rarr;</span>
+                        </h2>
+                        <p class="text-slate-400 text-sm md:text-base mt-2.5 leading-relaxed">High-definition photo enlargements, premium wooden frames, glassless canvas wraps, and desktop displays.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Showcase Collection</span>
+                        <span class="text-xs font-extrabold text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 group-hover:bg-blue-600 group-hover:text-white transition">Browse Frames &rarr;</span>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </section>
+
+</div>
+{% endblock %}

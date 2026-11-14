@@ -1,0 +1,124 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed | {{ order.order_number }} | Damith Studio</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-800 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- TOP MINIMAL NAVIGATION HEADER -->
+    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 h-20 flex items-center justify-between">
+            
+            <!-- Brand Logo & Home Link -->
+            <a href="/" class="flex items-center gap-3 group">
+                <div class="p-1.5 bg-slate-800 rounded-xl border border-slate-700 group-hover:border-amber-400 transition duration-300">
+                    <img src="{% static 'images/damith_graphics_logo.png' %}" alt="Damith Graphics Logo" class="w-8 h-8 object-contain">
+                </div>
+                <div>
+                    <p class="font-black text-lg text-white tracking-tight leading-none">Damith <span class="text-[#F7931E]">Graphics</span></p>
+                    <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase block mt-0.5">Return to Home</span>
+                </div>
+            </a>
+
+            <!-- Return Home / Explore Services Header Links -->
+            <div class="flex items-center gap-3 text-xs font-black">
+                <a href="{% url 'studio:home' %}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl border border-slate-700 transition">
+                    &larr; Studio Home
+                </a>
+                <a href="/" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition hidden sm:inline-block">
+                    Explore Web & Tech
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- CONFIRMATION RECEIPT CONTENT -->
+    <main class="max-w-2xl mx-auto px-4 py-10 w-full flex-1 flex flex-col justify-center">
+
+        <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
+            
+            <!-- Success Status Badge -->
+            <div class="text-center space-y-2">
+                <span class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 text-3xl font-black inline-flex items-center justify-center border border-emerald-200 shadow-sm">
+                    ✓
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Order Received!</h1>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium">Thank you, <strong class="text-slate-800">{{ order.customer_name }}</strong>. Your order is pending payment verification.</p>
+            </div>
+
+            <!-- Order Ref Banner -->
+            <div class="bg-slate-900 text-white p-4 rounded-2xl flex items-center justify-between shadow-md">
+                <div>
+                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Order Reference</span>
+                    <span class="text-xl font-black text-amber-400 tracking-wider">{{ order.order_number }}</span>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Total Amount</span>
+                    <span class="text-xl font-black text-emerald-400">LKR {{ order.total_amount }}</span>
+                </div>
+            </div>
+
+            <!-- Bank Transfer Details Card -->
+            <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-3">
+                <div class="flex items-center justify-between border-b border-slate-200/60 pb-2">
+                    <span class="text-xs font-black uppercase text-slate-700 tracking-wider">Bank Payment Transfer</span>
+                    <span class="text-[10px] font-extrabold text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-200">Pending Slip</span>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <span class="text-slate-400 font-medium block">Bank Name</span>
+                        <span class="font-bold text-slate-900">Commercial Bank</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 font-medium block">Account Name</span>
+                        <span class="font-bold text-slate-900">Damith Graphics</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 font-medium block">Account Number</span>
+                        <span class="font-bold text-slate-900">8001234567</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-400 font-medium block">Branch</span>
+                        <span class="font-bold text-slate-900">Nuwara Eliya</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRIMARY & SECONDARY ACTION BUTTONS -->
+            <div class="space-y-3 pt-2">
+                <!-- Primary Action: WhatsApp Proof -->
+                <a href="{{ wa_link }}" target="_blank" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-sm rounded-2xl shadow-lg shadow-emerald-600/20 transition duration-300 flex items-center justify-center gap-2">
+                    <span>💬 Send Slip via WhatsApp</span>
+                    <span>&rarr;</span>
+                </a>
+
+                <!-- Secondary Action: Order Another Print -->
+                <a href="{% url 'studio:home' %}" class="w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-black text-xs rounded-2xl transition duration-300 flex items-center justify-center gap-2 border border-slate-200">
+                    <span>☕ Order Another Print / Frame</span>
+                </a>
+            </div>
+
+            <!-- Footer Return Link -->
+            <div class="text-center pt-2">
+                <a href="/" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition">
+                    &larr; Return to Main Homepage (damithgraphics.lk)
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="py-6 text-center text-slate-500 text-xs">
+        &copy; DamithGraphics.lk. All rights reserved.
+    </footer>
+
+</body>
+</html>

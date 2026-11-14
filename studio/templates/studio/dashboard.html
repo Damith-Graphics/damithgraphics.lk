@@ -1,0 +1,171 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Operations Dashboard | Damith Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased min-h-screen">
+
+    <!-- Top Navigation -->
+    <header class="bg-slate-900 text-white sticky top-0 z-50 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="bg-amber-500 text-slate-950 font-black text-xs px-2.5 py-1 rounded">ADMIN</span>
+                <h1 class="text-lg font-black tracking-tight">Studio Operations Dashboard</h1>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-semibold">
+                <a href="{% url 'studio:home' %}" target="_blank" class="text-slate-300 hover:text-white transition">View Live Studio &rarr;</a>
+                <a href="/admin/" target="_blank" class="bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg transition">Django Admin</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
+
+        <!-- Business Metric Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+                <span class="text-slate-400 text-xs font-bold uppercase tracking-wider block">Total Revenue</span>
+                <span class="text-2xl font-black text-emerald-600 mt-1 block">LKR {{ total_revenue }}</span>
+            </div>
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+                <span class="text-slate-400 text-xs font-bold uppercase tracking-wider block">Pending Payment</span>
+                <span class="text-2xl font-black text-amber-500 mt-1 block">{{ pending_count }} Orders</span>
+            </div>
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+                <span class="text-slate-400 text-xs font-bold uppercase tracking-wider block">In Printing Queue</span>
+                <span class="text-2xl font-black text-blue-600 mt-1 block">{{ printing_count }} Orders</span>
+            </div>
+            <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm">
+                <span class="text-slate-400 text-xs font-bold uppercase tracking-wider block">Dispatched / Complete</span>
+                <span class="text-2xl font-black text-slate-900 mt-1 block">{{ completed_count }} Orders</span>
+            </div>
+        </div>
+
+        <!-- Order Management Table with Live Search Bar & Filters -->
+        <div class="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-sm">
+            <div class="p-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-black text-slate-900">Live Print & Frame Queue</h2>
+                    <p class="text-slate-500 text-xs mt-0.5">Manage statuses, access customer files, and dispatch WhatsApp proofs.</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <!-- SEARCH FORM BAR -->
+                    <form method="GET" action="{% url 'studio:admin_dashboard' %}" class="flex items-center gap-2">
+                        {% if current_filter %}
+                        <input type="hidden" name="status" value="{{ current_filter }}">
+                        {% endif %}
+                        <div class="relative w-full sm:w-64">
+                            <input type="text" 
+                                   name="q" 
+                                   value="{{ search_query }}" 
+                                   placeholder="Search Name, Phone, Ref..." 
+                                   class="w-full pl-9 pr-4 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:border-blue-600 focus:bg-white transition">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
+                        </div>
+                        <button type="submit" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition">
+                            Search
+                        </button>
+                        {% if search_query %}
+                        <a href="{% url 'studio:admin_dashboard' %}" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition">
+                            Clear
+                        </a>
+                        {% endif %}
+                    </form>
+
+                    <!-- Status Filters -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto text-xs border-l border-slate-200 pl-3">
+                        <a href="{% url 'studio:admin_dashboard' %}{% if search_query %}?q={{ search_query }}{% endif %}" class="px-3 py-1.5 rounded-xl font-bold {% if not current_filter %}bg-slate-900 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">All</a>
+                        <a href="?status=pending{% if search_query %}&q={{ search_query }}{% endif %}" class="px-3 py-1.5 rounded-xl font-bold {% if current_filter == 'pending' %}bg-amber-500 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">Pending</a>
+                        <a href="?status=printing{% if search_query %}&q={{ search_query }}{% endif %}" class="px-3 py-1.5 rounded-xl font-bold {% if current_filter == 'printing' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">Printing</a>
+                        <a href="?status=dispatched{% if search_query %}&q={{ search_query }}{% endif %}" class="px-3 py-1.5 rounded-xl font-bold {% if current_filter == 'dispatched' %}bg-emerald-600 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">Dispatched</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-600">
+                    <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] font-extrabold tracking-wider border-b border-slate-100">
+                        <tr>
+                            <th class="p-4">Order Ref</th>
+                            <th class="p-4">Item & Mode</th>
+                            <th class="p-4">Customer</th>
+                            <th class="p-4">Files</th>
+                            <th class="p-4">Total</th>
+                            <th class="p-4">Status</th>
+                            <th class="p-4 text-right">Quick Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for ord in orders %}
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="p-4 font-black text-slate-900">
+                                {{ ord.order_number }}
+                                <span class="block text-[10px] font-normal text-slate-400">{{ ord.created_at|date:"M d, H:i" }}</span>
+                            </td>
+                            <td class="p-4">
+                                <span class="font-bold text-slate-900 block">{{ ord.item.title }} (x{{ ord.quantity }})</span>
+                                {% if ord.selected_template %}
+                                <span class="text-[10px] text-blue-600 font-extrabold bg-blue-50 px-2 py-0.5 rounded">Tpl: {{ ord.selected_template.template_code }}</span>
+                                {% else %}
+                                <span class="text-[10px] text-amber-600 font-extrabold bg-amber-50 px-2 py-0.5 rounded">Custom Design</span>
+                                {% endif %}
+                            </td>
+                            <td class="p-4">
+                                <span class="font-bold text-slate-900 block">{{ ord.customer_name }}</span>
+                                <span class="text-slate-400">{{ ord.whatsapp_number }}</span>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex items-center gap-1">
+                                    {% if ord.photo_1 %}<a href="{{ ord.photo_1.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 1"><img src="{{ ord.photo_1.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                                    {% if ord.photo_2 %}<a href="{{ ord.photo_2.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 2"><img src="{{ ord.photo_2.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                                    {% if ord.photo_3 %}<a href="{{ ord.photo_3.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 3"><img src="{{ ord.photo_3.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                                    {% if ord.photo_4 %}<a href="{{ ord.photo_4.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 4"><img src="{{ ord.photo_4.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                                    {% if ord.photo_5 %}<a href="{{ ord.photo_5.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 5"><img src="{{ ord.photo_5.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                                    {% if ord.photo_6 %}<a href="{{ ord.photo_6.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 6"><img src="{{ ord.photo_6.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                                    <span class="text-[10px] text-slate-400 font-bold ml-1">({{ ord.photo_count }} photos)</span>
+                                </div>
+                            </td>
+                            <td class="p-4 font-extrabold text-slate-900">
+                                LKR {{ ord.total_amount }}
+                            </td>
+                            <td class="p-4">
+                                <form method="POST" action="{% url 'studio:update_order_status' ord.id %}">
+                                    {% csrf_token %}
+                                    <select name="status" onchange="this.form.submit()" class="px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 focus:outline-none bg-slate-50 cursor-pointer">
+                                        <option value="pending" {% if ord.status == 'pending' %}selected{% endif %}>Pending</option>
+                                        <option value="confirmed" {% if ord.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                        <option value="proofing" {% if ord.status == 'proofing' %}selected{% endif %}>Proof Sent</option>
+                                        <option value="printing" {% if ord.status == 'printing' %}selected{% endif %}>Printing</option>
+                                        <option value="dispatched" {% if ord.status == 'dispatched' %}selected{% endif %}>Dispatched</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td class="p-4 text-right">
+                                <a href="{{ ord.generate_proof_whatsapp_link }}" target="_blank" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-sm transition">
+                                    WA Proof &rarr;
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-12 text-slate-400 font-medium">
+                                No orders matching this search query or filter.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

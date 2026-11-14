@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Damith Studio | Artisan Custom Printing & Framing{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Space+Grotesk:wght@600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#0B0F17] text-slate-100 min-h-screen flex flex-col justify-between antialiased selection:bg-amber-500 selection:text-slate-950">
+
+    <!-- UNIFIED BRAND HEADER -->
+    <header class="border-b border-slate-800/80 bg-[#0B0F17]/90 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="{% url 'studio:home' %}" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-400 text-slate-950 font-black flex items-center justify-center text-lg shadow-lg shadow-amber-500/10 group-hover:scale-105 transition">
+                    🎨
+                </div>
+                <div>
+                    <span class="font-display font-bold text-lg text-white block tracking-tight leading-none">DAMITH STUDIO</span>
+                    <span class="text-[10px] font-bold tracking-widest text-amber-500 uppercase block mt-1">Nuwara Eliya, Sri Lanka</span>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-8 text-xs font-bold uppercase tracking-wider text-slate-300">
+                <a href="{% url 'studio:home' %}" class="hover:text-amber-400 transition">Home</a>
+                <a href="{% url 'studio:showcase' 'mugs' %}" class="hover:text-amber-400 transition flex items-center gap-1.5">☕ Mugs</a>
+                <a href="{% url 'studio:showcase' 'photos' %}" class="hover:text-amber-400 transition flex items-center gap-1.5">🖼️ Photo Framing</a>
+                <a href="{% url 'studio:track_order' %}" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition">Track Order</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN PAGE CONTENT -->
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FLOATING WHATSAPP ASSISTANT -->
+    <a href="https://wa.me/94771234567?text=Hi%20Damith%20Studio!%20I%20have%20a%20question%20about%20your%20custom%20printing%20services." 
+       target="_blank" 
+       class="fixed bottom-6 right-6 z-50 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black px-5 py-3.5 rounded-2xl shadow-2xl shadow-emerald-500/30 flex items-center gap-3 transition hover:scale-105 active:scale-95 text-xs tracking-wider uppercase">
+        <span class="text-xl">💬</span>
+        <span>Quick WhatsApp Ask</span>
+    </a>
+
+    <!-- UNIFIED FOOTER -->
+    <footer class="border-t border-slate-800/80 bg-[#080B11] py-12 text-slate-400 text-xs">
+        <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <span class="font-display font-bold text-white text-base block mb-2">Damith Studio</span>
+                <p class="leading-relaxed">Custom photo mug printing, resin-coated portrait framing, and personalized corporate gift crafting based in Nuwara Eliya, Sri Lanka.</p>
+            </div>
+            <div>
+                <span class="font-bold text-slate-200 uppercase tracking-wider block mb-2">Customer Links</span>
+                <ul class="space-y-2">
+                    <li><a href="{% url 'studio:showcase' 'mugs' %}" class="hover:text-amber-400 transition">Mug Printing Collection</a></li>
+                    <li><a href="{% url 'studio:showcase' 'photos' %}" class="hover:text-amber-400 transition">Photo Framing & Canvas Tiers</a></li>
+                    <li><a href="{% url 'studio:track_order' %}" class="hover:text-amber-400 transition">Track Your Order Status</a></li>
+                </ul>
+            </div>
+            <div>
+                <span class="font-bold text-slate-200 uppercase tracking-wider block mb-2">Direct Studio Hotline</span>
+                <p class="text-slate-300 font-medium leading-relaxed">WhatsApp: +94 77 123 4567<br>Pickup Hub: Nuwara Eliya Town Center, Sri Lanka</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-6 mt-8 pt-6 border-t border-slate-800/50 text-center text-[11px] text-slate-500">
+            &copy; 2026 Damith Studio. All rights reserved. Built with artisan print precision.
+        </div>
+    </footer>
+
+</body>
+</html>

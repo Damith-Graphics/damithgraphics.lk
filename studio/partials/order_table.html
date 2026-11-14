@@ -1,0 +1,160 @@
+<div id="order-table-container" class="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-sm">
+    <div class="p-6 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-xl font-black text-slate-900">Live Print & Frame Queue</h2>
+            <p class="text-slate-500 text-xs mt-0.5">Manage statuses, access customer files, and dispatch WhatsApp proofs & status notifications.</p>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <!-- LIVE SEARCH BAR WITH HTMX -->
+            <form method="GET" action="{% url 'studio:admin_dashboard' %}" class="flex items-center gap-2" onsubmit="return false;">
+                {% if current_filter %}
+                <input type="hidden" name="status" value="{{ current_filter }}">
+                {% endif %}
+                <div class="relative w-full sm:w-72">
+                    <input type="text" 
+                           name="q" 
+                           value="{{ search_query }}" 
+                           placeholder="Type to search Name, Phone, Ref..." 
+                           hx-get="{% url 'studio:admin_dashboard' %}"
+                           hx-trigger="keyup changed delay:300ms, search"
+                           hx-target="#order-table-container"
+                           hx-select="#order-table-container"
+                           hx-swap="outerHTML"
+                           hx-include="[name='status']"
+                           class="w-full pl-9 pr-8 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs font-medium focus:outline-none focus:border-blue-600 focus:bg-white transition">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    {% if search_query %}
+                    <a href="{% url 'studio:admin_dashboard' %}{% if current_filter %}?status={{ current_filter }}{% endif %}" 
+                       hx-get="{% url 'studio:admin_dashboard' %}{% if current_filter %}?status={{ current_filter }}{% endif %}"
+                       hx-target="#order-table-container"
+                       hx-select="#order-table-container"
+                       hx-swap="outerHTML"
+                       class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 text-xs font-bold">✕</a>
+                    {% endif %}
+                </div>
+            </form>
+
+            <!-- Status Filters -->
+            <div class="flex items-center gap-1.5 overflow-x-auto text-xs border-l border-slate-200 pl-3">
+                <a href="{% url 'studio:admin_dashboard' %}{% if search_query %}?q={{ search_query }}{% endif %}" 
+                   hx-get="{% url 'studio:admin_dashboard' %}{% if search_query %}?q={{ search_query }}{% endif %}"
+                   hx-target="#order-table-container"
+                   hx-select="#order-table-container"
+                   hx-swap="outerHTML"
+                   class="px-3 py-1.5 rounded-xl font-bold {% if not current_filter %}bg-slate-900 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">All</a>
+                
+                <a href="?status=pending{% if search_query %}&q={{ search_query }}{% endif %}" 
+                   hx-get="?status=pending{% if search_query %}&q={{ search_query }}{% endif %}"
+                   hx-target="#order-table-container"
+                   hx-select="#order-table-container"
+                   hx-swap="outerHTML"
+                   class="px-3 py-1.5 rounded-xl font-bold {% if current_filter == 'pending' %}bg-amber-500 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">Pending</a>
+                
+                <a href="?status=printing{% if search_query %}&q={{ search_query }}{% endif %}" 
+                   hx-get="?status=printing{% if search_query %}&q={{ search_query }}{% endif %}"
+                   hx-target="#order-table-container"
+                   hx-select="#order-table-container"
+                   hx-swap="outerHTML"
+                   class="px-3 py-1.5 rounded-xl font-bold {% if current_filter == 'printing' %}bg-blue-600 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">Printing</a>
+                
+                <a href="?status=dispatched{% if search_query %}&q={{ search_query }}{% endif %}" 
+                   hx-get="?status=dispatched{% if search_query %}&q={{ search_query }}{% endif %}"
+                   hx-target="#order-table-container"
+                   hx-select="#order-table-container"
+                   hx-swap="outerHTML"
+                   class="px-3 py-1.5 rounded-xl font-bold {% if current_filter == 'dispatched' %}bg-emerald-600 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">Dispatched</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="overflow-x-auto relative">
+        <!-- HTMX Loading Indicator Spinner -->
+        <div class="htmx-indicator absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center z-10">
+            <span class="text-xs font-bold text-blue-600 bg-white px-3 py-1.5 rounded-full shadow border border-slate-200 animate-pulse">Filtering orders...</span>
+        </div>
+
+        <table class="w-full text-left text-xs text-slate-600">
+            <thead class="bg-slate-50 text-slate-400 uppercase text-[10px] font-extrabold tracking-wider border-b border-slate-100">
+                <tr>
+                    <th class="p-4">Order Ref</th>
+                    <th class="p-4">Item & Mode</th>
+                    <th class="p-4">Customer</th>
+                    <th class="p-4">Files</th>
+                    <th class="p-4">Total</th>
+                    <th class="p-4">Status</th>
+                    <th class="p-4 text-right">Quick Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+                {% for ord in orders %}
+                <tr class="hover:bg-slate-50/80 transition">
+                    <td class="p-4 font-black text-slate-900">
+                        {{ ord.order_number }}
+                        <span class="block text-[10px] font-normal text-slate-400">{{ ord.created_at|date:"M d, H:i" }}</span>
+                    </td>
+                    <td class="p-4">
+                        <span class="font-bold text-slate-900 block">{{ ord.item.title }} (x{{ ord.quantity }})</span>
+                        {% if ord.selected_template %}
+                        <span class="text-[10px] text-blue-600 font-extrabold bg-blue-50 px-2 py-0.5 rounded">Tpl: {{ ord.selected_template.template_code }}</span>
+                        {% else %}
+                        <span class="text-[10px] text-amber-600 font-extrabold bg-amber-50 px-2 py-0.5 rounded">Custom Design</span>
+                        {% endif %}
+                    </td>
+                    <td class="p-4">
+                        <span class="font-bold text-slate-900 block">{{ ord.customer_name }}</span>
+                        <span class="text-slate-400">{{ ord.whatsapp_number }}</span>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-1">
+                            {% if ord.photo_1 %}<a href="{{ ord.photo_1.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 1"><img src="{{ ord.photo_1.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                            {% if ord.photo_2 %}<a href="{{ ord.photo_2.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 2"><img src="{{ ord.photo_2.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                            {% if ord.photo_3 %}<a href="{{ ord.photo_3.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 3"><img src="{{ ord.photo_3.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                            {% if ord.photo_4 %}<a href="{{ ord.photo_4.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 4"><img src="{{ ord.photo_4.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                            {% if ord.photo_5 %}<a href="{{ ord.photo_5.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 5"><img src="{{ ord.photo_5.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                            {% if ord.photo_6 %}<a href="{{ ord.photo_6.url }}" target="_blank" class="w-7 h-7 bg-slate-200 rounded-md overflow-hidden block border border-slate-300" title="View Photo 6"><img src="{{ ord.photo_6.url }}" class="w-full h-full object-cover"></a>{% endif %}
+                            <span class="text-[10px] text-slate-400 font-bold ml-1">({{ ord.photo_count }} photos)</span>
+                        </div>
+                    </td>
+                    <td class="p-4 font-extrabold text-slate-900">
+                        LKR {{ ord.total_amount }}
+                    </td>
+                    <td class="p-4">
+                        <form method="POST" action="{% url 'studio:update_order_status' ord.id %}">
+                            {% csrf_token %}
+                            <select name="status" onchange="this.form.submit()" class="px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 focus:outline-none bg-slate-50 cursor-pointer">
+                                <option value="pending" {% if ord.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="confirmed" {% if ord.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="proofing" {% if ord.status == 'proofing' %}selected{% endif %}>Proof Sent</option>
+                                <option value="printing" {% if ord.status == 'printing' %}selected{% endif %}>Printing</option>
+                                <option value="dispatched" {% if ord.status == 'dispatched' %}selected{% endif %}>Dispatched</option>
+                            </select>
+                        </form>
+                    </td>
+                    <td class="p-4 text-right">
+                        <div class="inline-flex items-center gap-1.5 justify-end">
+                            <!-- Notify Customer of Status Update on WhatsApp -->
+                            <a href="{{ ord.get_status_whatsapp_link }}" target="_blank" class="inline-flex items-center gap-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black text-[11px] px-2.5 py-1.5 rounded-lg shadow-sm transition" title="Notify customer of status change via WhatsApp">
+                                WA Status &rarr;
+                            </a>
+
+                            <!-- Send Proof Preview via WhatsApp -->
+                            <a href="{{ ord.generate_proof_whatsapp_link }}" target="_blank" class="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[11px] px-2.5 py-1.5 rounded-lg shadow-sm transition" title="Send design proof preview link">
+                                WA Proof &rarr;
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-12 text-slate-400 font-medium">
+                        No orders matching this search query or filter.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

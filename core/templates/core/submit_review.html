@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Client Review | Damith Graphics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 flex items-center justify-center min-h-screen p-6">
+
+    <div class="max-w-md w-full bg-white border border-slate-200/80 rounded-3xl p-8 shadow-xl">
+        <div class="text-center mb-6">
+            <img src="{% static 'images/damith_graphics_logo.png' %}" alt="Damith Graphics" class="w-12 h-12 object-contain mx-auto mb-2">
+            <h1 class="text-2xl font-black text-slate-900">Leave Your Review</h1>
+            <p class="text-slate-500 text-sm mt-1">Project: {{ review.client_company_or_project }}</p>
+        </div>
+
+        <form method="POST" class="space-y-5">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Your Name</label>
+                <input type="text" name="client_name" value="{{ review.client_name }}" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Rating</label>
+                <select name="rating" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600">
+                    <option value="5" selected>⭐⭐⭐⭐⭐ (5 / 5 Stars)</option>
+                    <option value="4">⭐⭐⭐⭐ (4 / 5 Stars)</option>
+                    <option value="3">⭐⭐⭐ (3 / 5 Stars)</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Your Testimonial</label>
+                <textarea name="comment" rows="4" required placeholder="Write your experience working with Damith Graphics..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md shadow-blue-600/20 transition">
+                Submit & Publish Review
+            </button>
+        </form>
+    </div>
+
+</body>
+</html>
